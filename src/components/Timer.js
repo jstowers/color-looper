@@ -4,18 +4,41 @@ export default function Timer(props) {
     console.log('Timer props =', props);
     const [delay] = useState(1000);
     const [time, setTime] = useState(0);
-    const [isRunning] = useState(props.isOn);
+	const [start, setStart] = useState(0);
 
-    useInterval(() => {
-        setTime(time + 1);
-    }, isRunning ? delay : null);
+	console.log('start =', start);
+	console.log('time =', time);
+
+    useEffect(() => {
+		let timerId;
+
+      	if(props.isOn) {
+			console.log('timer is running');
+			setStart(Date.now()-time);
+			timerId = setInterval(() => setTime(Date.now() - start));
+		}
+		return () => {
+			console.log('timer is off');
+			clearInterval(timerId);	
+		}
+    })
 
     return (
         <div>
-            <h3>current: {time}</h3>
+            <h3>time: {time}</h3>
         </div>
     );
 }
+
+function usePrevious(value) {
+    const ref = useRef();
+    useEffect(() => {
+        ref.current = value;
+    });
+    return ref.current;
+}
+
+/*
 
 function useInterval(callback, delay) {
     const savedCallback = useRef();
@@ -41,11 +64,4 @@ function useInterval(callback, delay) {
     }, [delay]);
 }
 
-// function usePrevious(value) {
-//     const ref = useRef();
-//     useEffect(() => {
-//         ref.current = value;
-//     });
-//     return ref.current;
-// }
-
+*/
