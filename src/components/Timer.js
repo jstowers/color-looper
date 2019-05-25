@@ -10,7 +10,7 @@ const styles = {
 }
 
 function Timer(props) {
-    const { classes } = props;
+    const { classes, isReset } = props;
 
     const [time, dispatch] = useReducer((state, action) => {
         if (action === 'inc') {
@@ -30,10 +30,8 @@ function Timer(props) {
     }, [props.isOn]);
 
     useEffect(() => {
-        if(props.isReset) {
-            dispatch('reset');
-        }
-    })
+        dispatch('reset');
+    }, [isReset]);
     
     return (
         <div className={classes.label}>
