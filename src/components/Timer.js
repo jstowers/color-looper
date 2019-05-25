@@ -1,42 +1,99 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useReducer } from 'react';
+import { withStyles } from '@material-ui/core';
 
-export default function Timer(props) {
-    console.log('Timer props =', props);
-    const [delay] = useState(1000);
-    const [time, setTime] = useState(0);
-	const [start, setStart] = useState(0);
+const styles = {
+    label: {
+        padding: 10,
+        display: "inline",
+        align: "center"
+    }
+}
 
-	console.log('start =', start);
-	console.log('time =', time);
+function Timer(props) {
+    const { classes } = props;
+
+    const [time, dispatch] = useReducer((state, action) => {
+        if (action === 'inc') {
+            return state + 1;
+        }
+        else if (action === 'reset') {
+            return 0;
+        }
+    }, 0);
+      
+    useEffect(() => {
+        let timerId;
+        if(props.isOn) {
+            timerId = setInterval(() => {dispatch('inc')}, 1000);
+        }
+        return () => clearInterval(timerId);
+    }, [props.isOn]);
 
     useEffect(() => {
-		let timerId;
-
-      	if(props.isOn) {
-			console.log('timer is running');
-			setStart(Date.now()-time);
-			timerId = setInterval(() => setTime(Date.now() - start));
-		}
-		return () => {
-			console.log('timer is off');
-			clearInterval(timerId);	
-		}
+        if(props.isReset) {
+            dispatch('reset');
+        }
     })
-
+    
     return (
-        <div>
-            <h3>time: {time}</h3>
+        <div className={classes.label}>
+            <h3>time:{time}</h3>
         </div>
     );
 }
 
-function usePrevious(value) {
-    const ref = useRef();
-    useEffect(() => {
-        ref.current = value;
-    });
-    return ref.current;
-}
+export default withStyles(styles)(Timer);
+
+//     useEffect(() => {
+//         let timerId;
+
+//         if(props.isOn) {
+//             timerId = setInterval(() => setSeconds(seconds + 1), 1000);
+//         }
+//         return () => {
+//             clearInterval(timerId);	
+//         }
+//     }, [props.isOn]);
+
+//     return (
+//         <div>
+//             <h3>time:{seconds}</h3>
+//         </div>
+//     );
+// }
+
+
+// This code kinds works okay.  
+// export default function Timer(props) {
+//     const [time, setTime] = useState(0);
+//     //const [start] = useState(Date.now()-time);
+
+//     useEffect(() => {
+//         let timerId;
+
+//       	if(props.isOn) {
+//             let start = Date.now() - time;
+// 			timerId = setInterval(() => setTime(Math.floor(Date.now() - start)), 100);
+// 		}
+// 		return () => {
+// 			clearInterval(timerId);	
+// 		}
+//     });
+
+//     return (
+//         <div>
+//             <h3>time:{time}</h3>
+//         </div>
+//     );
+// }
+
+// function usePrevious(value) {
+//     const ref = useRef();
+//     useEffect(() => {
+//         ref.current = value;
+//     });
+//     return ref.current;
+// }
 
 /*
 

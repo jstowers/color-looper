@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const generateRandomColorArray = (colorList, numberCells) => {
-    let colorArray = [];
-    for (let i = 0; i < numberCells; i++) {
-        let randomColor = colorList[Math.floor(Math.random()*colorList.length)];
-        colorArray.push(randomColor);
-    }
-    return colorArray;
-}
-
-const colorList = ['robinsEggBlue', 'purpleMountainsMajesty', 'salmon', 'violetRed', 'forestGreen', 'apricot', 'indigo'];
+const colorList = [
+    'robinsEggBlue', 
+    'purpleMountainsMajesty',
+    'salmon', 
+    'violetRed', 
+    'forestGreen', 
+    'apricot', 
+    'indigo'
+];
 
 const crayolaCrayons = {
     robinsEggBlue: {
@@ -34,25 +33,47 @@ const crayolaCrayons = {
         hexCode: '#4F69C6'
     }
 }
- 
-const Grid = () => {
 
+const generateGridBoxes = () => {
     let items = [];
     let colorArray = generateRandomColorArray(colorList, 100);
     for (let i = 0; i < colorArray.length; i++) {
-        let [backgroundColor, setBackgroundColor] = useState(crayolaCrayons[colorArray[i]].hexCode);
+        let backgroundColor = crayolaCrayons[colorArray[i]].hexCode;
         let colorHex = {backgroundColor: backgroundColor};
         items.push(
             <div className='flex-item' 
                 key={i} 
-                style={colorHex}
-                onClick={() => setBackgroundColor('black')}>
+                style={colorHex}>
             </div>
         );
     };
+    return items;
+}
+
+const generateRandomColorArray = (colorList, numberCells) => {
+    let colorArray = [];
+    for (let i = 0; i < numberCells; i++) {
+        let randomColor = colorList[Math.floor(Math.random()*colorList.length)];
+        colorArray.push(randomColor);
+    }
+    return colorArray;
+}
+
+
+const Grid = (props) => {
+    const { isResetGrid } = props;
+    const [gridBoxes, setGridBoxes] = useState(generateGridBoxes());
+
+    const resetGridBoxes = () => {
+        setGridBoxes(generateGridBoxes());
+    }
+
+    useEffect(() => {
+        resetGridBoxes();
+    }, [isResetGrid]);
 
     return (
-        <div className="flex-container">{items}</div>
+        <div className="flex-container">{gridBoxes}</div>
     );
 }
 
