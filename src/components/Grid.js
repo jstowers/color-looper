@@ -35,14 +35,16 @@ const crayolaCrayons = {
 }
 
 const generateGridBoxes = () => {
+    console.log('=> INSIDE generateGridBoxes');
     let items = [];
-    let colorArray = generateRandomColorArray(colorList, 100);
+    let colorArray = generateRandomColorArray(colorList, 10);
     for (let i = 0; i < colorArray.length; i++) {
         let backgroundColor = crayolaCrayons[colorArray[i]].hexCode;
         let colorHex = {backgroundColor: backgroundColor};
         items.push(
             <div className='flex-item' 
-                key={i} 
+                key={i}
+                name={colorArray[i]} 
                 style={colorHex}>
             </div>
         );
@@ -51,6 +53,7 @@ const generateGridBoxes = () => {
 }
 
 const generateRandomColorArray = (colorList, numberCells) => {
+    console.log('=> INSIDE generateRandomColorArray');
     let colorArray = [];
     for (let i = 0; i < numberCells; i++) {
         let randomColor = colorList[Math.floor(Math.random()*colorList.length)];
@@ -61,16 +64,20 @@ const generateRandomColorArray = (colorList, numberCells) => {
 
 
 const Grid = (props) => {
-    const { isResetGrid } = props;
-    const [gridBoxes, setGridBoxes] = useState(generateGridBoxes());
-
-    const resetGridBoxes = () => {
-        setGridBoxes(generateGridBoxes());
-    }
+    const { isOn, isResetGrid } = props;
+    console.log('props =', props);
+    let [gridBoxes, setGridBoxes] = useState(generateGridBoxes());
 
     useEffect(() => {
-        resetGridBoxes();
-    }, [isResetGrid]);
+        console.log('INSIDE useEffect [isOn]')
+        console.log('gridBoxes =', gridBoxes);
+    }, [isOn]);
+
+    useEffect(() => {
+        if(isResetGrid) {
+            setGridBoxes(generateGridBoxes());
+        }
+    }, [isResetGrid])
 
     return (
         <div className="flex-container">{gridBoxes}</div>
